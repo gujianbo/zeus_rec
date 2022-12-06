@@ -15,13 +15,13 @@ logging.basicConfig(filename=config.log_file, level=logging.DEBUG, format=LOG_FO
 
 
 def gen_item_pair(input_file):
-    session_chunks = pd.read_json(input_file, lines=True, chunksize=100000)
+    # session_chunks = pd.read_json(input_file, lines=True, chunksize=100000)
     session_item = dict()
     item_session = dict()
     item_pairs = set()
-    for chunk in tqdm(session_chunks, desc="generate item pairs"):
-        for _, session in chunk.iterrows():
-            session = session.to_dict()
+    with open(input_file, "r") as f:
+        for line in tqdm(f, desc="gen_item_pair"):
+            session = json.loads(line.strip())
             session_id = session['session']
             click_aid = set([event['aid'] for event in session['events'] if event["type"] == "clicks"])
             # print(click_aid)
