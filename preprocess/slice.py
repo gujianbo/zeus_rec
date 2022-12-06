@@ -124,13 +124,13 @@ def main(train_set, output_path, days, seed):
     max_ts = 1661723999984
 
     session_chunks = pd.read_json(train_set, lines=True, chunksize=100000)
-    train_file = output_path / 'train_sessions.jsonl'
-    test_file_full = output_path / 'test_sessions_full.jsonl'
+    train_file = output_path + '/train_sessions.jsonl'
+    test_file_full = output_path + '/test_sessions_full.jsonl'
     train_test_split(session_chunks, train_file, test_file_full, max_ts, days)
 
     test_sessions = pd.read_json(test_file_full, lines=True)
-    test_sessions_file = output_path / 'test_sessions.jsonl'
-    test_labels_file = output_path / 'test_labels.jsonl'
+    test_sessions_file = output_path + '/test_sessions.jsonl'
+    test_labels_file = output_path + '/test_labels.jsonl'
     create_kaggle_testset(test_sessions, test_sessions_file, test_labels_file)
 
 
