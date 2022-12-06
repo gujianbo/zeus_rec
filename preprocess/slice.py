@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 from utils.args import config
-import tqdm
+from tqdm.auto import tqdm
 import json
 
 
