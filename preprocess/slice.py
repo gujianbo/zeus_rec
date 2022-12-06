@@ -21,8 +21,8 @@ class setEncoder(json.JSONEncoder):
 def get_max_min_ts(sessions_path):
     max_ts = float('-inf')
     min_ts = float('inf')
-    max_aid = int('-inf')
-    min_aid = int('inf')
+    max_aid = -sys.maxsize - 1
+    min_aid = sys.maxsize
     with open(sessions_path) as f:
         for line in tqdm(f, desc="Finding max timestamp"):
             session = json.loads(line)
