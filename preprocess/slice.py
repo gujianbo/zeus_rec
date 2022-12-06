@@ -120,7 +120,8 @@ def create_kaggle_testset(sessions, sessions_output, labels_output):
 
 def main(train_set, output_path, days, seed):
     random.seed(seed)
-    max_ts = get_max_min_ts(train_set)
+    # max_ts, min_ts = get_max_min_ts(train_set)
+    max_ts = 1661723999984
 
     session_chunks = pd.read_json(train_set, lines=True, chunksize=100000)
     train_file = output_path / 'train_sessions.jsonl'
