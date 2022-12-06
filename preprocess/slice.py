@@ -7,6 +7,10 @@ from pathlib import Path
 import random
 import pandas as pd
 from copy import deepcopy
+import logging
+
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s[line:%(lineno)d]- %(message)s"
+logging.basicConfig(filename=config.log_file, level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class setEncoder(json.JSONEncoder):
@@ -17,11 +21,18 @@ class setEncoder(json.JSONEncoder):
 def get_max_min_ts(sessions_path):
     max_ts = float('-inf')
     min_ts = float('inf')
+    max_aid = int('-inf')
+    min_aid = int('inf')
     with open(sessions_path) as f:
         for line in tqdm(f, desc="Finding max timestamp"):
             session = json.loads(line)
             max_ts = max(max_ts, session['events'][-1]['ts'])
             min_ts = min(min_ts, session['events'][0]['ts'])
+
+            for event in session['events']:
+                max_aid = max(max_aid, event['aid'])
+                min_aid = min(min_aid, event['aid'])
+    logging.info("max_aid:" + str(max_aid) + " min_aid:" + str(min_aid) + " max_ts:" + str(max_ts) + " min_ts:" + str(min_ts))
     return max_ts, min_ts
 
 
@@ -79,6 +90,7 @@ def filter_unknown_items(session_path, known_items):
 def train_test_split(session_chunks, train_path, test_path, max_ts, test_days):
     split_millis = test_days * 24 * 60 * 60 * 1000
     split_ts = max_ts - split_millis
+    logging.info("split_ts:" + str(split_ts))
     train_items = set()
     Path(train_path).parent.mkdir(parents=True, exist_ok=True)
     train_file = open(train_path, "w")
@@ -120,8 +132,7 @@ def create_kaggle_testset(sessions, sessions_output, labels_output):
 
 def main(train_set, output_path, days, seed):
     random.seed(seed)
-    # max_ts, min_ts = get_max_min_ts(train_set)
-    max_ts = 1661723999984
+    max_ts, min_ts = get_max_min_ts(train_set)
 
     session_chunks = pd.read_json(train_set, lines=True, chunksize=100000)
     train_file = output_path + '/train_sessions.jsonl'
@@ -135,7 +146,7 @@ def main(train_set, output_path, days, seed):
 
 
 if __name__ == "__main__":
-    print("input_file", config.input_file)
-    print("slice_path", config.slice_path)
+    logging.info("input_file:" + str(config.input_file))
+    logging.info("slice_path:" + str(config.slice_path))
     main(config.input_file, config.slice_path, 7, config.seed)
 
