@@ -60,6 +60,7 @@ def calc_simlarity(item_pairs, session_item, item_session, alpha=1.0, session_nu
         item_sim_dict[item_i][item_j] = result
         item_sim_dict.setdefault(item_j, dict())
         item_sim_dict[item_j][item_i] = result
+    logging.info("Calculate similarity finished!")
     return item_sim_dict
 
 
