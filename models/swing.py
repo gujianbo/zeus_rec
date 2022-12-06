@@ -23,7 +23,8 @@ def gen_item_pair(input_file):
         for _, session in chunk.iterrows():
             session = session.to_dict()
             session_id = session['session']
-            click_aid = set([event['aid'] for event in session['events'] if event["type"]=="click"])
+            click_aid = set([event['aid'] for event in session['events'] if event["type"] == "clicks"])
+            print(click_aid)
             session_item[session_id] = click_aid
             for aid in click_aid:
                 item_session.setdefault(aid, set())
@@ -44,7 +45,7 @@ def calc_simlarity(item_pairs, session_item, item_session, alpha=1.0, session_nu
     item_sim_dict = dict()
     logging.info("item pairs length：{}".format(len(item_pairs)))
 
-    for pair_str in item_pairs:
+    for pair_str in tqdm(item_pairs, desc="calculate similarities"):
         item_i, item_j = pair_str.split(",")
         item_i = int(item_i)
         item_j = int(item_j)
