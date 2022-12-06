@@ -24,7 +24,7 @@ def gen_item_pair(input_file):
             session = session.to_dict()
             session_id = session['session']
             click_aid = set([event['aid'] for event in session['events'] if event["type"] == "clicks"])
-            print(click_aid)
+            # print(click_aid)
             session_item[session_id] = click_aid
             for aid in click_aid:
                 item_session.setdefault(aid, set())
