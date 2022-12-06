@@ -108,7 +108,7 @@ def train_test_split(session_chunks, train_path, test_path, max_ts, test_days):
                     train_file.write(json.dumps(session) + "\n")
     train_file.close()
     test_file.close()
-    filter_unknown_items(test_path, train_items)
+    # filter_unknown_items(test_path, train_items)
 
 
 def create_kaggle_testset(sessions, sessions_output, labels_output):
