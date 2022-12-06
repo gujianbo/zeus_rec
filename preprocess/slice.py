@@ -1,4 +1,5 @@
-import os
+import sys
+sys.path.append("..")
 from utils.args import config
 import tqdm
 import json
