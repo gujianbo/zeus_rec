@@ -32,7 +32,8 @@ def get_max_min_ts(sessions_path):
             for event in session['events']:
                 max_aid = max(max_aid, event['aid'])
                 min_aid = min(min_aid, event['aid'])
-    logging.info("max_aid:" + str(max_aid) + " min_aid:" + str(min_aid) + " max_ts:" + str(max_ts) + " min_ts:" + str(min_ts))
+    logging.info("In file " + sessions_path + ", max_aid:" +
+                 str(max_aid) + " min_aid:" + str(min_aid) + " max_ts:" + str(max_ts) + " min_ts:" + str(min_ts))
     return max_ts, min_ts
 
 
@@ -148,5 +149,6 @@ def main(train_set, output_path, days, seed):
 if __name__ == "__main__":
     logging.info("input_file:" + str(config.input_file))
     logging.info("slice_path:" + str(config.slice_path))
+    max_ts, min_ts = get_max_min_ts(config.test_file)
     main(config.input_file, config.slice_path, 7, config.seed)
 
