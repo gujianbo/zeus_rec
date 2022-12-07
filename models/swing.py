@@ -39,8 +39,8 @@ def gen_item_pair(input_file):
             for pair in pair_list:
                 if pair[0] == pair[1]:
                     continue
-                pair_dict.setdefault(pair[0], Lossy_Counting(pair[0], 200000))
-                pair_dict.setdefault(pair[1], Lossy_Counting(pair[1], 200000))
+                pair_dict.setdefault(pair[0], Lossy_Counting(pair[0], 50000))
+                pair_dict.setdefault(pair[1], Lossy_Counting(pair[1], 50000))
                 pair_dict[pair[0]].enter_num(pair[1])
                 pair_dict[pair[1]].enter_num(pair[0])
 
