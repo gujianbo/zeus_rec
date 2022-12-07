@@ -116,7 +116,7 @@ def uniq_pair(input_file):
         pair_path = Path(input_file).parent.joinpath("tmp")
         pair_file = str(pair_path)+"/pair_"+str(i)
         logging.info("To uniq file:" + pair_file)
-        os.system("sort " + pair_file + ".pair.tmp | uniq > " + pair_file+".uniq")
+        os.system("sort " + pair_file + " | uniq > " + pair_file+".uniq")
         logging.info("Uniq file:" + pair_file + "done!")
     logging.info("Uniq pair file finished!")
 
@@ -131,7 +131,7 @@ def output_sim_file(item_sim_dict, out_path, top_k=100):
 
 
 def main():
-    session_item, item_session = gen_item_pair(config.input_file, config.output_file)
+    # session_item, item_session = gen_item_pair(config.input_file, config.output_file)
     uniq_pair(config.output_file)
     item_sim_dict = calc_simlarity(session_item, item_session, config.output_file)
     del session_item, item_session
