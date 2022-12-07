@@ -55,7 +55,7 @@ class Heap:
     def top_items(self):
         top_item = []
         while len(self.data) > 0:
-            top_item.append(self.data[0])
+            top_item.insert(0, self.data[0])
             data_len = len(self.data)
             self.data[0] = deepcopy(self.data[data_len-1])
             self.data.pop()
@@ -91,10 +91,13 @@ class Heap:
 
 
 if __name__ == "__main__":
-    h = Heap(1, 500)
+    h = Heap(1, 100)
+    num_dict = dict()
     for i in range(200000):
         rand = int(np.random.normal(50, 20))
         h.enter_item([i, rand])
+        num_dict[i] = rand
+    sort_num_dict = sorted(num_dict.items(), key=lambda k: k[1], reverse=True)[:100]
+    print(sort_num_dict)
     top_items = h.top_items()
-    for item in top_items:
-        print(item)
+    print(top_items)

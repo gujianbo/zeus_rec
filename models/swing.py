@@ -78,7 +78,7 @@ def gen_item_pair(input_file, output_file):
     return session_item, item_session
 
 
-def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=200):
+def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=1000):
     item_sim_dict = dict()
     # logging.info("item pairs length：{}".format(len(item_pairs)))
     # fdout = open(output_file, "w")
@@ -101,7 +101,7 @@ def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_n
                 session_pairs = list(combinations(common_sessions, 2))
                 result = 0.0
                 for (user_u, user_v) in session_pairs:
-                    result += 1 / (alpha + list(session_item[user_u] & session_item[user_v]).__len__())
+                    result += 1 / (alpha + len(session_item[user_u] & session_item[user_v]))
                 item_sim_dict.setdefault(item_i, Heap(item_i, 100))
                 item_sim_dict[item_i].enter_item([item_j, result])
                 item_sim_dict.setdefault(item_j, Heap(item_j, 100))
@@ -123,7 +123,7 @@ def uniq_pair(input_file):
     logging.info("Uniq pair file finished!")
 
 
-def output_sim_file(item_sim_dict, out_path, top_k=100):
+def output_sim_file(item_sim_dict, out_path):
     fd = open(out_path, "w")
     for item, sim_items in item_sim_dict.items():
         sim_score = sim_items.top_items()
