@@ -17,12 +17,9 @@ LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s[line:%(lineno)d]- %(mes
 logging.basicConfig(filename=config.log_file, level=logging.DEBUG, format=LOG_FORMAT)
 
 
-def gen_item_pair(input_file, output_file):
-    # session_chunks = pd.read_json(input_file, lines=True, chunksize=100000)
+def gen_item_pair(input_file, output_file, debug=0):
     session_item = dict()
     item_session = dict()
-    # pair_dict = dict()
-    # item_pairs = set()
     pair_path = Path(output_file).parent.joinpath("tmp")
     pair_path.mkdir(parents=True, exist_ok=True)
     fdout = []
@@ -42,14 +39,6 @@ def gen_item_pair(input_file, output_file):
                 item_session[aid].add(session_id)
             pair_list = list(combinations(click_aid, 2))
 
-            # for pair in pair_list:
-            #     if pair[0] == pair[1]:
-            #         continue
-            #     pair_dict.setdefault(pair[0], Lossy_Counting(pair[0], 10000))
-            #     pair_dict.setdefault(pair[1], Lossy_Counting(pair[1], 10000))
-            #     pair_dict[pair[0]].enter_num(pair[1])
-            #     pair_dict[pair[1]].enter_num(pair[0])
-
             for pair in pair_list:
                 if pair[0] > pair[1]:
                     pair_str = str(pair[0]) + "," + str(pair[1])
@@ -59,36 +48,23 @@ def gen_item_pair(input_file, output_file):
                     continue
                 hash_code = int(hashlib.md5((pair_str + str(config.seed)).encode('utf8')).hexdigest()[0:10], 16) % 10
                 fdout[hash_code].write(pair_str+"\n")
-            idx += 1
-            if idx >= 50000:
-                break
+            if debug == 1:
+                idx += 1
+                if idx >= 50000:
+                    break
     for fd in fdout:
         fd.close()
-    # logging.info("Loop train file done!")
-    # pair_set = set()
-    # for key in pair_dict.keys():
-    #     sort_key = pair_dict[key].topk(5000)
-    #     for (r_key, count) in sort_key:
-    #         if key > r_key:
-    #             pair_set.add(str(r_key) + "," + str(key))
-    #         elif key < r_key:
-    #             pair_set.add(str(key) + "," + str(r_key))
-    #
-    # logging.info("item pairs length：{}".format(len(pair_set)))
     return session_item, item_session
 
 
-def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=1000):
+def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=5000):
     item_sim_dict = dict()
-    # logging.info("item pairs length：{}".format(len(item_pairs)))
-    # fdout = open(output_file, "w")
     pair_path = Path(output_file).parent.joinpath("tmp")
 
     for i in range(10):
         pair_file = str(pair_path) + "/pair_" + str(i) + ".uniq"
         logging.info("calc_simlarity file " + pair_file)
         with open(pair_file, "r") as f:
-        # for item_pair in tqdm(item_pairs, desc="calculate similarities"):
             for item_pair in tqdm(f, desc="calc_simlarity:"+pair_file):
                 pair_str = item_pair.strip()
                 item_i, item_j = pair_str.split(",")
@@ -106,11 +82,10 @@ def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_n
                 item_sim_dict[item_i].enter_item([item_j, result])
                 item_sim_dict.setdefault(item_j, Heap(item_j, 100))
                 item_sim_dict[item_j].enter_item([item_i, result])
-                # fdout.write(str(item_i)+","+str(item_j)+","+str(result))
         logging.info("calc_simlarity file " + pair_file + " done!")
     logging.info("Calculate similarity finished!")
-    # fdout.close()
     return item_sim_dict
+
 
 def uniq_pair(input_file):
     logging.info("start uniq pair file")
@@ -133,7 +108,7 @@ def output_sim_file(item_sim_dict, out_path):
 
 
 def main():
-    session_item, item_session = gen_item_pair(config.input_file, config.output_file)
+    session_item, item_session = gen_item_pair(config.input_file, config.output_file, config.debug)
     uniq_pair(config.output_file)
     item_sim_dict = calc_simlarity(session_item, item_session, config.output_file)
     del session_item, item_session
