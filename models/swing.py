@@ -113,7 +113,7 @@ def output_sim_file(item_sim_dict, out_path, top_k=100):
 
 
 def main():
-    session_item, item_session, item_pair = gen_item_pair(config.input_file, config.output_file)
+    session_item, item_session, item_pair = gen_item_pair(config.input_file)
     # uniq_pair(config.output_file)
     item_sim_dict = calc_simlarity(item_pair, session_item, item_session)
     del session_item, item_session
