@@ -71,8 +71,10 @@ def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_n
                 item_i = int(item_i)
                 item_j = int(item_j)
                 common_sessions = item_session[item_i] & item_session[item_j]
+                if len(common_sessions) <= 1:
+                    continue
                 # 采个样，防止太多，撑爆内存
-                if len(common_sessions) > session_num_threhold:
+                elif len(common_sessions) > session_num_threhold:
                     common_sessions = random.sample(common_sessions, session_num_threhold)
                 session_pairs = list(combinations(common_sessions, 2))
                 result = 0.0
