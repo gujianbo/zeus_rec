@@ -60,7 +60,7 @@ def gen_item_pair(input_file, output_file):
                 hash_code = int(hashlib.md5((pair_str + str(config.seed)).encode('utf8')).hexdigest()[0:10], 16) % 10
                 fdout[hash_code].write(pair_str+"\n")
             idx += 1
-            if idx >= 100000:
+            if idx >= 50000:
                 break
     for fd in fdout:
         fd.close()
@@ -81,11 +81,12 @@ def gen_item_pair(input_file, output_file):
 def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=200):
     item_sim_dict = dict()
     # logging.info("item pairs length：{}".format(len(item_pairs)))
-    fdout = open(output_file, "w")
+    # fdout = open(output_file, "w")
     pair_path = Path(output_file).parent.joinpath("tmp")
 
     for i in range(10):
         pair_file = str(pair_path) + "/pair_" + str(i) + ".uniq"
+        logging.info("calc_simlarity file " + pair_file)
         with open(pair_file, "r") as f:
         # for item_pair in tqdm(item_pairs, desc="calculate similarities"):
             for item_pair in tqdm(f, desc="calc_simlarity:"+pair_file):
@@ -106,6 +107,7 @@ def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_n
                 item_sim_dict.setdefault(item_j, Heap(item_j, 100))
                 item_sim_dict[item_j].enter_item([item_i, result])
                 # fdout.write(str(item_i)+","+str(item_j)+","+str(result))
+        logging.info("calc_simlarity file " + pair_file + " done!")
     logging.info("Calculate similarity finished!")
     # fdout.close()
     return item_sim_dict
@@ -117,7 +119,7 @@ def uniq_pair(input_file):
         pair_file = str(pair_path)+"/pair_"+str(i)
         logging.info("To uniq file:" + pair_file)
         os.system("sort " + pair_file + " | uniq > " + pair_file+".uniq")
-        logging.info("Uniq file:" + pair_file + "done!")
+        logging.info("Uniq file:" + pair_file + " done!")
     logging.info("Uniq pair file finished!")
 
 
@@ -131,7 +133,7 @@ def output_sim_file(item_sim_dict, out_path, top_k=100):
 
 
 def main():
-    # session_item, item_session = gen_item_pair(config.input_file, config.output_file)
+    session_item, item_session = gen_item_pair(config.input_file, config.output_file)
     uniq_pair(config.output_file)
     item_sim_dict = calc_simlarity(session_item, item_session, config.output_file)
     del session_item, item_session
