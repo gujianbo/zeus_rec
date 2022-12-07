@@ -24,6 +24,7 @@ def gen_item_pair(input_file, output_file):
     # pair_dict = dict()
     # item_pairs = set()
     pair_path = Path(output_file).parent.joinpath("tmp")
+    pair_path.mkdir(parents=True, exist_ok=True)
     fdout = []
     for i in range(10):
         fd = open(str(pair_path)+"/pair_"+str(i), "w")
