@@ -59,7 +59,7 @@ def gen_item_pair(input_file, output_file, debug=0):
     return session_item, item_session
 
 
-def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=5000):
+def calc_simlarity(session_item, item_session, output_file, alpha=1.0, session_num_threhold=1000):
     item_sim_dict = dict()
     pair_path = Path(output_file).parent.joinpath("tmp")
 
