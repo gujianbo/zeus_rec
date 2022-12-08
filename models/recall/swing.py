@@ -33,7 +33,7 @@ def gen_item_pair(input_file, output_file, debug=0):
             session_id = session['session']
             click_aid = set([event['aid'] for event in session['events'] if event["type"] == "clicks"])
             # print(click_aid)
-            if len(click_aid) <= 1:
+            if len(click_aid) <= 3:
                 continue
             session_item[session_id] = click_aid
             for aid in click_aid:
